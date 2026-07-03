@@ -219,6 +219,7 @@ const xiangCi = [
 ];
 
 const contentLibrary = window.ICHING_CONTENT || {};
+const zhouyiTuanCis = contentLibrary.zhouyiTuanCis || {};
 const zhouyiYaoCis = contentLibrary.zhouyiYaoCis || {};
 const gaodaoYaoReadings = contentLibrary.gaodaoYaoReadings || {};
 const zengYaoReadings = contentLibrary.zengYaoReadings || {};
@@ -253,7 +254,7 @@ const hexagrams = baseHexagrams.map(([id, name, fullName, upperKey, lowerKey, vi
     lines: [...upper.line, ...lower.line],
     original: {
       guaCi: guaCi[id - 1],
-      tuanCi: id === 1 ? "大哉乾元，万物资始，乃统天。" : "彖辞长文留待内容库校对录入，本原型保留公版文本结构。",
+      tuanCi: zhouyiTuanCis[id] || "",
       xiangCi: xiangCi[id - 1],
       yaoCis: lineReadings.map(({ position, zhouyi }) => ({ position, text: zhouyi }))
     },
