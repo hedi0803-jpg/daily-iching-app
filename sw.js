@@ -1,8 +1,9 @@
-const CACHE_NAME = "daily-iching-pwa-v3";
+const CACHE_NAME = "daily-iching-pwa-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
+  "./content-library.js",
   "./app.js",
   "./manifest.webmanifest",
   "./icons/icon-192-v3.png",

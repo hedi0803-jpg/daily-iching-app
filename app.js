@@ -218,32 +218,10 @@ const xiangCi = [
   "火在水上，未济；君子以慎辨物居方。"
 ];
 
-const yaoSamples = {
-  1: [
-    ["初九", "潜龙勿用。"],
-    ["九二", "见龙在田，利见大人。"],
-    ["九三", "君子终日乾乾，夕惕若，厉无咎。"],
-    ["九四", "或跃在渊，无咎。"],
-    ["九五", "飞龙在天，利见大人。"],
-    ["上九", "亢龙有悔。"]
-  ],
-  2: [
-    ["初六", "履霜，坚冰至。"],
-    ["六二", "直方大，不习无不利。"],
-    ["六三", "含章可贞，或从王事，无成有终。"],
-    ["六四", "括囊，无咎无誉。"],
-    ["六五", "黄裳，元吉。"],
-    ["上六", "龙战于野，其血玄黄。"]
-  ],
-  3: [
-    ["初九", "磐桓，利居贞，利建侯。"],
-    ["六二", "屯如邅如，乘马班如。匪寇婚媾，女子贞不字，十年乃字。"],
-    ["六三", "即鹿无虞，惟入于林中，君子几不如舍，往吝。"],
-    ["六四", "乘马班如，求婚媾，往吉，无不利。"],
-    ["九五", "屯其膏，小贞吉，大贞凶。"],
-    ["上六", "乘马班如，泣血涟如。"]
-  ]
-};
+const contentLibrary = window.ICHING_CONTENT || {};
+const zhouyiYaoCis = contentLibrary.zhouyiYaoCis || {};
+const gaodaoYaoReadings = contentLibrary.gaodaoYaoReadings || {};
+const zengYaoReadings = contentLibrary.zengYaoReadings || {};
 
 const zengScenarios = {
   1: "自强开创：能量充足时，先校正方向，再让行动持续。",
@@ -259,6 +237,7 @@ const zengScenarios = {
 const hexagrams = baseHexagrams.map(([id, name, fullName, upperKey, lowerKey, virtue]) => {
   const upper = trigramByElement[upperKey];
   const lower = trigramByElement[lowerKey];
+  const lineReadings = buildLineReadings(id, { name, fullName, virtue });
   return {
     id,
     name,
@@ -276,8 +255,9 @@ const hexagrams = baseHexagrams.map(([id, name, fullName, upperKey, lowerKey, vi
       guaCi: guaCi[id - 1],
       tuanCi: id === 1 ? "大哉乾元，万物资始，乃统天。" : "彖辞长文留待内容库校对录入，本原型保留公版文本结构。",
       xiangCi: xiangCi[id - 1],
-      yaoCis: yaoSamples[id] || []
+      yaoCis: lineReadings.map(({ position, zhouyi }) => ({ position, text: zhouyi }))
     },
+    lineReadings,
     gaodao: makeGaodao(id, name, virtue),
     zengShiqiang: makeZeng(id, name, fullName, virtue)
   };
@@ -439,6 +419,64 @@ function renderTabs() {
     .join("")}</nav>`;
 }
 
+function buildLineReadings(id, hexMeta) {
+  const zhouyiLines = zhouyiYaoCis[id] || [];
+  const gaodaoLines = gaodaoYaoReadings[id] || {};
+  const zengLines = zengYaoReadings[id] || {};
+  return zhouyiLines.map((line, index) => {
+    const position = Array.isArray(line) ? line[0] : line.position;
+    const zhouyi = Array.isArray(line) ? line[1] : line.text;
+    return {
+      position,
+      zhouyi,
+      gaodao: gaodaoLines[position] || "",
+      wisdom: zengLines[position] || makeWisdomYaoReading(hexMeta, position, zhouyi, index)
+    };
+  });
+}
+
+function renderLineSource(hex, sourceKey) {
+  const label = "智慧逐爻";
+  const rows = hex.lineReadings.filter((line) => line[sourceKey]);
+  if (!rows.length) return "";
+
+  return `
+    <section class="line-source">
+      <h3>${label}</h3>
+      <div class="yao-list">${rows
+        .map((line) => `<div class="yao-row"><div class="yao-pos">${line.position}</div><div>${line[sourceKey]}</div></div>`)
+        .join("")}</div>
+    </section>
+  `;
+}
+
+function makeWisdomYaoReading(hex, position, text, index) {
+  if (position === "用九") {
+    return "群龙无首，不是没有方向，而是让共同原则高过个人锋芒。适合把主导欲收一收，改用规则、共识和分工来成事。";
+  }
+  if (position === "用六") {
+    return "柔顺能够长久，关键在于守正而不失边界。今天宜以稳定承接变化，少争一时，重在把事情持续做好。";
+  }
+
+  const stages = ["起步", "成形", "承压", "转折", "居中", "收束"];
+  const stage = stages[Math.min(index, stages.length - 1)];
+  const signals = [];
+  if (text.includes("凶")) signals.push("先看风险，不急着证明自己");
+  if (text.includes("厉")) signals.push("知道有压力，就把边界和预案立清楚");
+  if (text.includes("吝")) signals.push("小处不顺，多半是在提醒姿态需要调整");
+  if (text.includes("悔")) signals.push("已经有可修正之处，及时回头仍能减少损失");
+  if (text.includes("无咎")) signals.push("只要守住分寸，就不必过度自责");
+  if (text.includes("吉")) signals.push("条件相应时可以前进，但仍要保持敬慎");
+  if (text.includes("利")) signals.push("有可用之机，宜顺势而为");
+  if (text.includes("勿用") || text.includes("不可") || text.includes("不利")) signals.push("暂缓行动，比勉强推进更有智慧");
+  if (text.includes("贞")) signals.push("核心在守正，别为了速度牺牲原则");
+  if (text.includes("孚")) signals.push("信任是这一爻的关键，先让承诺变得可靠");
+  if (text.includes("征") || text.includes("往") || text.includes("涉")) signals.push("若要行动，先确认目标、路线和同行者");
+
+  const signal = signals.slice(0, 2).join("；") || `以“${hex.virtue}”观时，先辨位置，再定进退`;
+  return `${position}是${hex.fullName}中的${stage}之位。爻辞“${text}”提醒：${signal}。落实到今天，可以先处理一个最具体的选择：该进则进，该守则守，不用被一时情绪带走。`;
+}
+
 function renderReader(hex) {
   if (state.activeTab === "gaodao") {
     return `
@@ -467,6 +505,7 @@ function renderReader(hex) {
           <p>${hex.zengShiqiang.scenario}</p>
           <p>${hex.zengShiqiang.wisdom}</p>
           <p>${hex.zengShiqiang.application}</p>
+          ${renderLineSource(hex, "wisdom")}
           <div class="quote-source">— 现代人生情境原创解读</div>
         </div>
       </article>
@@ -475,7 +514,7 @@ function renderReader(hex) {
 
   const yaoList = hex.original.yaoCis.length
     ? `<div class="yao-list">${hex.original.yaoCis
-        .map(([position, text]) => `<div class="yao-row"><div class="yao-pos">${position}</div><div>${text}</div></div>`)
+        .map((yao) => `<div class="yao-row"><div class="yao-pos">${yao.position}</div><div>${yao.text}</div></div>`)
         .join("")}</div>`
     : `<div class="yao-list"><div class="yao-row"><div class="yao-pos">爻辞</div><div>完整六爻文本留待内容库校对录入，本原型先呈现卦辞与象辞。</div></div></div>`;
 

@@ -460,6 +460,25 @@ body.dark .icon-button:focus-visible {
   color: var(--cinnabar);
 }
 
+.line-source {
+  margin-top: 26px;
+  padding-top: 8px;
+}
+
+.line-source h3 {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: calc(15px * var(--reader-scale));
+  font-weight: 700;
+}
+
+.line-source-note {
+  color: var(--muted);
+  font-size: calc(16px * var(--reader-scale));
+  line-height: 1.75;
+}
+
 .topic-grid {
   display: grid;
   gap: 12px;
