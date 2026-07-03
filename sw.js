@@ -1,13 +1,13 @@
-const CACHE_NAME = "daily-iching-pwa-v1";
+const CACHE_NAME = "daily-iching-pwa-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/maskable-512.png"
+  "./icons/icon-192-v3.png",
+  "./icons/icon-512-v3.png",
+  "./icons/maskable-512-v3.png"
 ];
 
 self.addEventListener("install", (event) => {
