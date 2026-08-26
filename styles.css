@@ -166,7 +166,7 @@ body.dark .phone::before {
 
 .hex-strip {
   display: grid;
-  grid-template-columns: 30px 1fr 30px;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
   gap: 8px;
   align-items: center;
   margin: 36px -6px 0;
@@ -176,36 +176,91 @@ body.dark .phone::before {
 
 .strip-scroller {
   display: grid;
-  grid-template-columns: repeat(7, minmax(34px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
 }
 
 .strip-item {
   min-width: 0;
+  height: 92px;
+  display: grid;
+  grid-template-rows: 54px 30px;
+  place-items: center;
+  padding: 4px 0 2px;
   border: 0;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
   text-align: center;
+  transition: background 160ms ease, box-shadow 160ms ease;
 }
 
-.strip-item .mini-symbol {
+.mini-lines {
+  display: grid;
+  width: 42px;
+  height: 48px;
+  gap: 4px;
+  align-content: center;
+  justify-items: center;
+}
+
+.mini-line {
   display: block;
-  color: var(--ink);
-  font-size: 34px;
-  line-height: 1;
+  width: 34px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.mini-line.broken {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 34px;
+  background: transparent;
+}
+
+.mini-line.broken::before,
+.mini-line.broken::after {
+  content: "";
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ink);
 }
 
 .strip-item .mini-name {
   display: block;
-  margin-top: 6px;
+  width: 100%;
   color: var(--soft-ink);
   font-family: var(--font-serif);
   font-size: 15px;
+  line-height: 1.25;
+  white-space: normal;
+  word-break: keep-all;
 }
 
-.strip-item.active .mini-symbol,
+.strip-item.active {
+  background: rgba(169, 34, 22, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(169, 34, 22, 0.16);
+}
+
+.strip-item.active .mini-line,
+.strip-item.active .mini-line.broken::before,
+.strip-item.active .mini-line.broken::after,
 .strip-item.active .mini-name {
   color: var(--cinnabar);
+  background: var(--cinnabar);
+}
+
+.strip-item.active .mini-line.broken {
+  background: transparent;
+}
+
+.strip-item.active .mini-name {
+  background: transparent;
+  font-weight: 700;
 }
 
 .icon-button {

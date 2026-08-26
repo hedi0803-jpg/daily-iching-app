@@ -221,6 +221,8 @@ const xiangCi = [
 const contentLibrary = window.ICHING_CONTENT || {};
 const zhouyiTuanCis = contentLibrary.zhouyiTuanCis || {};
 const zhouyiYaoCis = contentLibrary.zhouyiYaoCis || {};
+const gaodaoSummaries = contentLibrary.gaodaoSummaries || {};
+const wisdomSummaries = contentLibrary.wisdomSummaries || {};
 const gaodaoYaoReadings = contentLibrary.gaodaoYaoReadings || {};
 const zengYaoReadings = contentLibrary.zengYaoReadings || {};
 
@@ -369,7 +371,7 @@ function renderHexStrip(activeHex) {
             const hex = getHex(id);
             return `
               <button class="strip-item ${id === activeHex.id ? "active" : ""}" data-select="${id}" title="${hex.fullName}">
-                <span class="mini-symbol">${hex.unicode}</span>
+                ${renderMiniLines(hex.lines)}
                 <span class="mini-name">${hex.name}</span>
               </button>
             `;
@@ -379,6 +381,12 @@ function renderHexStrip(activeHex) {
       <button class="icon-button" data-action="next-hex" title="下一卦" aria-label="下一卦">${icon("chevron-right")}</button>
     </div>
   `;
+}
+
+function renderMiniLines(lines) {
+  return `<span class="mini-lines" aria-hidden="true">${displayLines(lines)
+    .map((value) => `<span class="mini-line ${value ? "" : "broken"}"></span>`)
+    .join("")}</span>`;
 }
 
 function renderHero(hex) {
@@ -404,9 +412,13 @@ function renderHero(hex) {
 }
 
 function renderLines(lines) {
-  return `<span class="hex-lines">${lines
+  return `<span class="hex-lines">${displayLines(lines)
     .map((value) => `<span class="hex-line ${value ? "" : "broken"}"></span>`)
     .join("")}</span>`;
+}
+
+function displayLines(lines) {
+  return [...lines.slice(0, 3)].reverse().concat([...lines.slice(3, 6)].reverse());
 }
 
 function renderTabs() {
@@ -482,7 +494,7 @@ function renderReader(hex) {
   if (state.activeTab === "gaodao") {
     return `
       <article class="reader">
-        <h2>占断式参考</h2>
+        <h2>${hex.gaodao.title || "占断式参考"}</h2>
         <div class="ornament" aria-hidden="true"></div>
         <div class="reader-text">
           <p>${hex.gaodao.interpretation}</p>
@@ -491,7 +503,7 @@ function renderReader(hex) {
               .map(([topic, text]) => `<div class="topic-row"><div class="topic-name">${topic}</div><div>${text}</div></div>`)
               .join("")}
           </div>
-          <div class="quote-source">— 依《高岛易断》占题结构原创概括</div>
+          <div class="quote-source">— 据《高岛易断》实占取向精炼</div>
         </div>
       </article>
     `;
@@ -507,7 +519,7 @@ function renderReader(hex) {
           <p>${hex.zengShiqiang.wisdom}</p>
           <p>${hex.zengShiqiang.application}</p>
           ${renderLineSource(hex, "wisdom")}
-          <div class="quote-source">— 现代人生情境原创解读</div>
+          <div class="quote-source">— 据易经哲思与现代讲解取向精炼</div>
         </div>
       </article>
     `;
@@ -925,6 +937,8 @@ function persistSettings() {
 }
 
 function makeGaodao(id, name, virtue) {
+  if (gaodaoSummaries[id]) return gaodaoSummaries[id];
+
   return {
     interpretation: `${name}卦以“${virtue}”为当下切入点。占断时先看时位是否相应，再看进退是否过度；宜把结果当作反思线索，不作直接决策凭据。`,
     divinations: {
@@ -939,6 +953,8 @@ function makeGaodao(id, name, virtue) {
 }
 
 function makeZeng(id, name, fullName, virtue) {
+  if (wisdomSummaries[id]) return wisdomSummaries[id];
+
   return {
     scenarioTitle: zengScenarios[id]?.split("：")[0] || `${name}之境`,
     scenario: zengScenarios[id] || `${fullName}提示一种以“${virtue}”为核心的人生情境：先辨清位置，再决定该进、该守、该退还是该化。`,

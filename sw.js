@@ -1,4 +1,4 @@
-const CACHE_NAME = "daily-iching-pwa-v7";
+const CACHE_NAME = "daily-iching-pwa-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
