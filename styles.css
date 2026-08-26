@@ -170,7 +170,7 @@ body.dark .phone::before {
   gap: 8px;
   align-items: center;
   margin: 36px -6px 0;
-  padding-bottom: 18px;
+  padding: 10px 0 18px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -178,7 +178,8 @@ body.dark .phone::before {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
-  align-items: stretch;
+  align-items: center;
+  overflow: visible;
 }
 
 .strip-item {
@@ -193,21 +194,23 @@ body.dark .phone::before {
   background: transparent;
   cursor: pointer;
   text-align: center;
-  transition: background 160ms ease, box-shadow 160ms ease;
+  transform: translateY(0);
+  transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .mini-lines {
   display: grid;
-  width: 42px;
+  width: min(100%, 42px);
   height: 48px;
   gap: 4px;
   align-content: center;
   justify-items: center;
+  padding: 0 3px;
 }
 
 .mini-line {
   display: block;
-  width: 34px;
+  width: 100%;
   height: 4px;
   border-radius: 999px;
   background: var(--ink);
@@ -216,8 +219,8 @@ body.dark .phone::before {
 .mini-line.broken {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 34px;
+  gap: min(8px, 24%);
+  width: 100%;
   background: transparent;
 }
 
@@ -237,13 +240,14 @@ body.dark .phone::before {
   font-family: var(--font-serif);
   font-size: 15px;
   line-height: 1.25;
-  white-space: normal;
+  white-space: nowrap;
   word-break: keep-all;
 }
 
 .strip-item.active {
   background: rgba(169, 34, 22, 0.06);
-  box-shadow: inset 0 0 0 1px rgba(169, 34, 22, 0.16);
+  box-shadow: 0 8px 18px rgba(92, 38, 30, 0.12), inset 0 0 0 1px rgba(169, 34, 22, 0.22);
+  transform: translateY(-8px);
 }
 
 .strip-item.active .mini-line,
@@ -354,13 +358,17 @@ body.dark .icon-button:focus-visible {
   align-items: center;
   gap: 12px;
   margin-top: 4px;
+  white-space: nowrap;
 }
 
 .hex-name {
+  display: block;
+  min-width: 0;
   font-family: var(--font-serif);
   font-size: 76px;
   font-weight: 600;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .trigram-pill {
@@ -1017,6 +1025,23 @@ body.dark .bottom-nav {
     padding-left: 18px;
   }
 
+  .hex-strip {
+    grid-template-columns: 30px minmax(0, 1fr) 30px;
+    gap: 4px;
+  }
+
+  .hex-strip > .icon-button {
+    width: 30px;
+  }
+
+  .strip-scroller {
+    gap: 4px;
+  }
+
+  .strip-item .mini-name {
+    font-size: 14px;
+  }
+
   .date-main {
     font-size: 32px;
   }
@@ -1028,8 +1053,22 @@ body.dark .bottom-nav {
   }
 
   .hero {
+    grid-template-columns: minmax(0, 42%) minmax(0, 1fr);
     gap: 16px;
     padding-top: 34px;
+  }
+
+  .hex-name-row {
+    gap: 8px;
+  }
+
+  .hex-name {
+    font-size: 58px;
+  }
+
+  .trigram-pill {
+    min-width: 28px;
+    font-size: 14px;
   }
 
   .hex-line {

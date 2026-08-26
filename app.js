@@ -487,7 +487,7 @@ function makeWisdomYaoReading(hex, position, text, index) {
   if (text.includes("征") || text.includes("往") || text.includes("涉")) signals.push("若要行动，先确认目标、路线和同行者");
 
   const signal = signals.slice(0, 2).join("；") || `以“${hex.virtue}”观时，先辨位置，再定进退`;
-  return `${position}是${hex.fullName}中的${stage}之位。爻辞“${text}”提醒：${signal}。落实到今天，可以先处理一个最具体的选择：该进则进，该守则守，不用被一时情绪带走。`;
+  return `${position}是${hex.fullName}中的${stage}之位。爻辞“${text}”提醒：${signal}。`;
 }
 
 function renderReader(hex) {
