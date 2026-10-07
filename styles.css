@@ -311,7 +311,8 @@ body.dark .icon-button:focus-visible {
 .hero-symbol {
   display: grid;
   gap: 12px;
-  cursor: zoom-in;
+  width: 100%;
+  background: transparent;
 }
 
 .hex-lines {
@@ -490,6 +491,67 @@ body.dark .icon-button:focus-visible {
 
 .reader-text p {
   margin: 0 0 16px;
+}
+
+.hanzi-reading {
+  display: inline;
+  padding: 0 1px 1px;
+  border: 0;
+  border-bottom: 1px dotted var(--cinnabar);
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+  cursor: pointer;
+}
+
+.hanzi-reading[aria-expanded="true"] {
+  border-bottom-style: solid;
+  color: var(--cinnabar);
+}
+
+.hanzi-reading:focus-visible {
+  outline: 2px solid var(--cinnabar);
+  outline-offset: 2px;
+}
+
+.pronunciation-tip {
+  position: fixed;
+  z-index: 40;
+  min-width: 76px;
+  max-width: calc(100vw - 16px);
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+.pronunciation-tip[hidden] {
+  display: none;
+}
+
+.pronunciation-tip::after {
+  position: absolute;
+  top: 100%;
+  left: calc(50% - 5px);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+  content: "";
+}
+
+.pronunciation-tip.below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--ink);
 }
 
 .quote-source {

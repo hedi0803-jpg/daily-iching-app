@@ -281,6 +281,7 @@ const app = document.querySelector("#app");
 init();
 
 function init() {
+  initPronunciation();
   state.settings = { ...state.settings, ...readJson(STORAGE.settings, {}) };
   document.body.classList.toggle("dark", state.settings.dark);
   document.documentElement.style.setProperty("--reader-scale", state.settings.scale);
@@ -325,6 +326,7 @@ function upsertHistory(date, id) {
 
 function render() {
   const hex = getHex(state.activeId);
+  closePronunciation();
   app.innerHTML = `
     <main class="stage">
       <section class="phone" aria-label="每日一卦主屏">
@@ -344,6 +346,7 @@ function render() {
     ${state.toast ? `<div class="toast">${escapeHtml(state.toast)}</div>` : ""}
   `;
   bindEvents();
+  annotatePronunciation(app);
 }
 
 function renderTopbar() {
@@ -392,9 +395,9 @@ function renderMiniLines(lines) {
 function renderHero(hex) {
   return `
     <section class="hero">
-      <button class="hero-symbol" data-action="zoom" aria-label="放大卦画" title="放大卦画">
+      <div class="hero-symbol" role="img" aria-label="${hex.fullName}卦画">
         ${renderLines(hex.lines)}
-      </button>
+      </div>
       <div class="hero-copy">
         <div class="hex-id">第${hex.id}卦 · ${hex.upperGlyph}${hex.lowerGlyph} ${hex.upperTrigram}上${hex.lowerTrigram}下</div>
         <div class="hex-name-row">
@@ -777,24 +780,6 @@ function renderModal() {
       </div>
     `;
   }
-  if (state.modal === "zoom") {
-    return `
-      <div class="modal-backdrop" data-action="close-modal">
-        <section class="modal" role="dialog" aria-modal="true" aria-label="卦画">
-          <div class="modal-body" data-stop>
-            <h2 class="modal-title">${hex.fullName}</h2>
-            <div class="share-card">
-              <div style="transform: scale(1.35); transform-origin: center; padding: 28px 44px;">${renderLines(hex.lines)}</div>
-              <div class="share-line">${hex.upperGlyph}${hex.lowerGlyph} ${hex.upperTrigram}上${hex.lowerTrigram}下</div>
-            </div>
-            <div class="modal-actions">
-              <button class="primary-button" data-action="close-modal">收起</button>
-            </div>
-          </div>
-        </section>
-      </div>
-    `;
-  }
   if (state.modal === "recast") {
     return `
       <div class="modal-backdrop" data-action="close-modal">
@@ -878,7 +863,6 @@ function handleAction(action, event) {
   if (action === "note") state.modal = "note";
   if (action === "share") state.modal = "share";
   if (action === "history") state.view = "history";
-  if (action === "zoom") state.modal = "zoom";
   if (action === "recast") state.modal = "recast";
   if (action === "close-modal") state.modal = null;
   if (action === "save-note") saveNote();
