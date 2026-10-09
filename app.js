@@ -219,6 +219,7 @@ const xiangCi = [
 ];
 
 const contentLibrary = window.ICHING_CONTENT || {};
+const plainLanguage = window.ICHING_PLAIN_LANGUAGE || {};
 const zhouyiTuanCis = contentLibrary.zhouyiTuanCis || {};
 const zhouyiYaoCis = contentLibrary.zhouyiYaoCis || {};
 const gaodaoSummaries = contentLibrary.gaodaoSummaries || {};
@@ -528,9 +529,13 @@ function renderReader(hex) {
     `;
   }
 
+  const plain = plainLanguage[hex.id] || {};
+  const renderPlain = (text) => text
+    ? `<details class="plain-language"><summary>白话</summary><p>${escapeHtml(text)}</p></details>`
+    : "";
   const yaoList = hex.original.yaoCis.length
     ? `<div class="yao-list">${hex.original.yaoCis
-        .map((yao) => `<div class="yao-row"><div class="yao-pos">${yao.position}</div><div>${yao.text}</div></div>`)
+        .map((yao, index) => `<div class="yao-row"><div class="yao-pos">${yao.position}</div><div>${yao.text}${renderPlain(plain.lines?.[index])}</div></div>`)
         .join("")}</div>`
     : `<div class="yao-list"><div class="yao-row"><div class="yao-pos">爻辞</div><div>完整六爻文本留待内容库校对录入，本原型先呈现卦辞与象辞。</div></div></div>`;
 
@@ -538,6 +543,7 @@ function renderReader(hex) {
     <article class="reader">
       <h2>${hex.original.guaCi}</h2>
       <div class="ornament" aria-hidden="true"></div>
+      ${renderPlain(plain.gua)}
       <div class="reader-text">
         <p>${hex.name}，${hex.virtue}也。${hex.original.xiangCi}</p>
         <p>${hex.original.tuanCi}</p>
